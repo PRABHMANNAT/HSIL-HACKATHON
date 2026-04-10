@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  lifecycle   String
+  owner       String
+  region      String
+  riskScore   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  activities  Activity[]
+  requirements Requirement[]
+}
+
+model Requirement {
+  id          String   @id @default(cuid())
+  projectId   String
+  title       String
+  category    String
+  verification String
+  createdAt   DateTime @default(now())
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  projectId String
+  actor     String
+  action    String
+  detail    String?
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
