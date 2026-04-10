@@ -141,4 +141,59 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .copilot-markdown > :first-child {
+    margin-top: 0;
+  }
+
+  .copilot-markdown > :last-child {
+    margin-bottom: 0;
+  }
+
+  .copilot-markdown a {
+    color: #67e8f9;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .copilot-markdown hr {
+    margin: 1rem 0;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .copilot-markdown blockquote {
+    margin: 1rem 0;
+    border-left: 3px solid rgba(34, 211, 238, 0.45);
+    padding-left: 1rem;
+    color: #cbd5e1;
+  }
+
+  .copilot-markdown .hljs-comment,
+  .copilot-markdown .hljs-quote {
+    color: #7c8da6;
+  }
+
+  .copilot-markdown .hljs-keyword,
+  .copilot-markdown .hljs-selector-tag,
+  .copilot-markdown .hljs-literal {
+    color: #7dd3fc;
+  }
+
+  .copilot-markdown .hljs-string,
+  .copilot-markdown .hljs-attr,
+  .copilot-markdown .hljs-template-tag {
+    color: #86efac;
+  }
+
+  .copilot-markdown .hljs-number,
+  .copilot-markdown .hljs-symbol,
+  .copilot-markdown .hljs-bullet {
+    color: #f9a8d4;
+  }
+
+  .copilot-markdown .hljs-title,
+  .copilot-markdown .hljs-section,
+  .copilot-markdown .hljs-function {
+    color: #fde68a;
+  }
 }

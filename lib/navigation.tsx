@@ -51,7 +51,7 @@ const iconMap: Record<PageSlug, LucideIcon> = {
   traceability: GitBranch,
   evidence: BookCheck,
   research: Microscope,
-  "ai-copilot": Bot,
+  copilot: Bot,
   "model-lab": BrainCircuit,
   collaboration: Users,
   "version-control": GitCommitHorizontal,

@@ -23,7 +23,7 @@ export type PageSlug =
   | "traceability"
   | "evidence"
   | "research"
-  | "ai-copilot"
+  | "copilot"
   | "model-lab"
   | "collaboration"
   | "version-control"
@@ -154,7 +154,7 @@ export const pageDefinitions: PageDefinition[] = [
     description: "Clinical literature, standards deltas, and competitive signals.",
   },
   {
-    slug: "ai-copilot",
+    slug: "copilot",
     label: "AI Copilot",
     section: "INTELLIGENCE",
     description: "Streaming design reasoning, gap analysis, and recommendation traces.",

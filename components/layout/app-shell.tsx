@@ -6,6 +6,7 @@ import { Leva } from "leva";
 
 import { AppHeader } from "@/components/layout/app-header";
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { FloatingCopilot } from "@/components/layout/floating-copilot";
 import { CommandPalette } from "@/components/ui/med/command-palette";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +44,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </div>
       <CommandPalette />
+      <FloatingCopilot />
       <Leva
         collapsed
         oneLineLabels
