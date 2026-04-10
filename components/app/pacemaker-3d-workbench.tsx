@@ -761,8 +761,8 @@ function getIssuesByComponent(issues: ValidationIssue[]) {
 
 function getLabelPosition(component: PacemakerComponent) {
   const [x, y, z] = component.explodedOffset;
-  const offset = new THREE.Vector3(x, y, z).normalize().multiplyScalar(0.42);
-  return [offset.x, offset.y + 0.18, offset.z + 0.04] as Vec3;
+  const offset = new THREE.Vector3(x, y, z).normalize().multiplyScalar(0.52);
+  return [offset.x, offset.y + 0.22, offset.z + 0.08] as Vec3;
 }
 
 function formatDimension(dimensions: Vec3) {
@@ -773,42 +773,52 @@ function formatPower(powerUw: number) {
   return `${powerUw.toFixed(0)} µW`;
 }
 
+function formatDimensionText(dimensions: Vec3) {
+  void formatDimension;
+  return `${(dimensions[0] * 10).toFixed(1)} x ${(dimensions[1] * 10).toFixed(1)} x ${(dimensions[2] * 10).toFixed(1)} mm`;
+}
+
+function formatPowerText(powerUw: number) {
+  void formatPower;
+  return `${powerUw.toFixed(0)} uW`;
+}
+
 function TitaniumShell({ displayMode }: { displayMode: DisplayMode }) {
   const transparent = displayMode === "xray";
   const wireframe = displayMode === "wireframe";
 
   return (
     <group name="outer_shell">
-      <mesh scale={[1.55, 1.95, 0.44]} castShadow receiveShadow>
-        <capsuleGeometry args={[0.98, 1.54, 14, 28]} />
+      <mesh position={[0.08, 0.08, -0.02]} rotation={[0, 0, -0.08]} scale={[1.5, 1.88, 0.42]} castShadow receiveShadow>
+        <capsuleGeometry args={[0.96, 1.48, 18, 36]} />
         <meshStandardMaterial
           color="#8B9BAD"
           metalness={0.82}
-          roughness={0.28}
-          envMapIntensity={1.2}
+          roughness={0.3}
+          envMapIntensity={1.35}
           transparent={transparent}
           opacity={transparent ? 0.22 : 1}
           wireframe={wireframe}
         />
       </mesh>
 
-      <mesh position={[0.96, 1.74, 0.04]} castShadow>
-        <boxGeometry args={[0.62, 0.74, 0.42]} />
+      <mesh position={[-0.18, -1.18, 0.12]} rotation={[0, 0, 0.03]} scale={[1.22, 0.74, 0.38]} castShadow receiveShadow>
+        <capsuleGeometry args={[0.86, 0.62, 16, 28]} />
         <meshStandardMaterial
-          color="#5f6f81"
-          metalness={0.86}
-          roughness={0.36}
+          color="#6e7e90"
+          metalness={0.88}
+          roughness={0.24}
           transparent={transparent}
-          opacity={transparent ? 0.26 : 1}
+          opacity={transparent ? 0.28 : 1}
           wireframe={wireframe}
         />
       </mesh>
 
       {[
-        [-1.0, 1.28, 0.16],
-        [1.0, 1.28, 0.16],
-        [-1.08, -1.38, 0.14],
-        [1.08, -1.38, 0.14],
+        [-1.06, 1.12, 0.15],
+        [0.88, 1.22, 0.15],
+        [-1.12, -1.22, 0.14],
+        [0.98, -1.34, 0.14],
       ].map((position, index) => (
         <mesh key={`suture-${index}`} position={position as Vec3} rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.12, 0.03, 12, 36]} />
@@ -822,6 +832,31 @@ function TitaniumShell({ displayMode }: { displayMode: DisplayMode }) {
           />
         </mesh>
       ))}
+
+      <mesh position={[0.08, 0.04, 0.23]} rotation={[0, 0, -0.08]} scale={[1.44, 1.68, 0.06]}>
+        <capsuleGeometry args={[0.92, 1.34, 18, 32]} />
+        <meshStandardMaterial
+          color="#c3cfdb"
+          metalness={0.94}
+          roughness={0.16}
+          envMapIntensity={1.55}
+          transparent={transparent}
+          opacity={transparent ? 0.1 : 0.28}
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      <mesh position={[-0.28, -0.5, 0.19]} rotation={[0, 0, -0.06]} scale={[1.04, 0.05, 0.05]}>
+        <boxGeometry args={[1.55, 0.12, 0.14]} />
+        <meshStandardMaterial
+          color="#d7e1eb"
+          metalness={0.92}
+          roughness={0.14}
+          transparent={transparent}
+          opacity={transparent ? 0.12 : 0.24}
+          wireframe={wireframe}
+        />
+      </mesh>
     </group>
   );
 }
@@ -831,27 +866,43 @@ function ConnectorHeader({ displayMode }: { displayMode: DisplayMode }) {
   const wireframe = displayMode === "wireframe";
 
   return (
-    <group position={[0.96, 1.82, 0.14]} name="connector_header">
-      <mesh castShadow>
-        <boxGeometry args={[0.42, 0.38, 0.24]} />
+    <group position={[1.18, 1.78, 0.16]} rotation={[0, 0, -0.06]} name="connector_header">
+      <mesh castShadow receiveShadow>
+        <boxGeometry args={[0.72, 0.56, 0.36]} />
         <meshStandardMaterial
-          color="#d3dee9"
-          metalness={0.88}
-          roughness={0.24}
-          transparent={transparent}
-          opacity={transparent ? 0.3 : 1}
+          color="#cad7e5"
+          metalness={0.42}
+          roughness={0.12}
+          envMapIntensity={1.45}
+          transparent
+          opacity={displayMode === "xray" ? 0.18 : 0.68}
           wireframe={wireframe}
         />
       </mesh>
-      {[-0.12, 0, 0.12].map((x) => (
-        <group key={`lead-ring-${x}`} position={[x, 0.02, 0]}>
+      <mesh position={[-0.06, -0.2, 0]}>
+        <boxGeometry args={[0.46, 0.08, 0.3]} />
+        <meshStandardMaterial
+          color="#6a7788"
+          metalness={0.84}
+          roughness={0.28}
+          transparent={transparent}
+          opacity={transparent ? 0.28 : 1}
+          wireframe={wireframe}
+        />
+      </mesh>
+      {[-0.14, 0.14].map((x) => (
+        <group key={`lead-ring-${x}`} position={[x, 0.06, 0]}>
           <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.04, 0.04, 0.22, 24]} />
-            <meshStandardMaterial color="#f8fafc" metalness={0.92} roughness={0.18} wireframe={wireframe} />
+            <cylinderGeometry args={[0.072, 0.072, 0.32, 32]} />
+            <meshStandardMaterial color="#edf2f7" metalness={0.94} roughness={0.14} wireframe={wireframe} />
           </mesh>
           <mesh position={[0, 0, 0.11]} rotation={[Math.PI / 2, 0, 0]}>
-            <torusGeometry args={[0.05, 0.015, 8, 24]} />
-            <meshStandardMaterial color="#94a3b8" metalness={0.86} roughness={0.24} wireframe={wireframe} />
+            <torusGeometry args={[0.092, 0.018, 12, 36]} />
+            <meshStandardMaterial color="#94a3b8" metalness={0.9} roughness={0.2} wireframe={wireframe} />
+          </mesh>
+          <mesh position={[0, 0, -0.11]} rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[0.092, 0.018, 12, 36]} />
+            <meshStandardMaterial color="#64748b" metalness={0.88} roughness={0.22} wireframe={wireframe} />
           </mesh>
         </group>
       ))}
@@ -880,7 +931,13 @@ function ValidationBadge({
   );
 }
 
-function FloatingLabel({ component }: { component: PacemakerComponent }) {
+function FloatingLabel({
+  component,
+  highlighted,
+}: {
+  component: PacemakerComponent;
+  highlighted: boolean;
+}) {
   const Icon = iconMap[component.icon];
   const labelPosition = getLabelPosition(component);
 
@@ -897,13 +954,25 @@ function FloatingLabel({ component }: { component: PacemakerComponent }) {
       />
       <Billboard position={labelPosition}>
         <Html distanceFactor={8} transform>
-          <div className="min-w-[180px] rounded-[18px] border border-white/10 bg-slate-950/88 px-3 py-2.5 text-white shadow-[0_18px_42px_rgba(2,6,23,0.38)] backdrop-blur-xl">
+          <div
+            className={cn(
+              "min-w-[190px] rounded-[18px] border px-3 py-2.5 text-white shadow-[0_18px_42px_rgba(2,6,23,0.38)] backdrop-blur-xl transition",
+              highlighted ? "border-sky-300/40 bg-slate-950/96" : "border-white/10 bg-slate-950/88",
+            )}
+          >
             <div className="flex items-start gap-2">
-              <div className="rounded-xl border border-white/10 bg-white/8 p-2 text-sky-300">
+              <div
+                className={cn(
+                  "rounded-xl border p-2",
+                  highlighted ? "border-sky-300/30 bg-sky-400/12 text-sky-200" : "border-white/10 bg-white/8 text-sky-300",
+                )}
+              >
                 <Icon className="size-3.5" />
               </div>
               <div className="min-w-0">
-                <div className="text-xs uppercase tracking-[0.18em] text-slate-400">{component.name}</div>
+                <div className={cn("text-xs uppercase tracking-[0.18em]", highlighted ? "text-sky-200" : "text-slate-400")}>
+                  {component.name}
+                </div>
                 <div className="mt-1 text-sm font-semibold">{component.label}</div>
                 <div className="mt-1 text-xs text-slate-300">{component.keySpec}</div>
               </div>
@@ -923,7 +992,9 @@ function ComponentPrimitive({
   validate,
   hasIssues,
   explodeFactor,
+  hovered,
   onSelect,
+  onHoverChange,
   onDragStart,
   pcbTexture,
 }: {
@@ -934,7 +1005,9 @@ function ComponentPrimitive({
   validate: boolean;
   hasIssues: boolean;
   explodeFactor: number;
+  hovered: boolean;
   onSelect: (componentId: string) => void;
+  onHoverChange: (componentId: string | null) => void;
   onDragStart: (componentId: string) => void;
   pcbTexture: THREE.CanvasTexture | null;
 }) {
@@ -979,6 +1052,14 @@ function ComponentPrimitive({
     onClick: (event: ThreeEvent<MouseEvent>) => {
       event.stopPropagation();
       onSelect(component.id);
+    },
+    onPointerOver: (event: ThreeEvent<PointerEvent>) => {
+      event.stopPropagation();
+      onHoverChange(component.id);
+    },
+    onPointerOut: (event: ThreeEvent<PointerEvent>) => {
+      event.stopPropagation();
+      onHoverChange(null);
     },
     onPointerDown: (event: ThreeEvent<PointerEvent>) => {
       event.stopPropagation();
@@ -1118,7 +1199,9 @@ function ComponentPrimitive({
   return (
     <group ref={groupRef} name={component.name}>
       {body}
-      {annotations ? <FloatingLabel component={component} /> : null}
+      {annotations || hovered || selected || explodeFactor > 0.45 ? (
+        <FloatingLabel component={component} highlighted={hovered || selected} />
+      ) : null}
       {validate ? <ValidationBadge status={hasIssues ? "issue" : "ok"} /> : null}
     </group>
   );
@@ -1135,8 +1218,10 @@ function SceneBridge({
   stepMode,
   stepIndex,
   dragging,
+  hoveredId,
   issuesByComponent,
   onSelect,
+  onHoverChange,
   onDragStart,
   backgroundAccent,
 }: {
@@ -1150,8 +1235,10 @@ function SceneBridge({
   stepMode: boolean;
   stepIndex: number;
   dragging: boolean;
+  hoveredId: string | null;
   issuesByComponent: Record<string, ValidationIssue[]>;
   onSelect: (componentId: string | null) => void;
+  onHoverChange: (componentId: string | null) => void;
   onDragStart: (componentId: string) => void;
   backgroundAccent: string;
 }) {
@@ -1227,7 +1314,13 @@ function SceneBridge({
       <Environment preset="studio" blur={0.72} />
       <Sparkles count={40} scale={[10, 7, 10]} size={1.2} speed={0.12} opacity={0.35} color="#6b8cff" />
 
-      <group position={[0, 0.1, 0]} onPointerMissed={() => onSelect(null)}>
+      <group
+        position={[0, 0.1, 0]}
+        onPointerMissed={() => {
+          onSelect(null);
+          onHoverChange(null);
+        }}
+      >
         <TitaniumShell displayMode={displayMode} />
         <ConnectorHeader displayMode={displayMode} />
         {components.map((component, index) => {
@@ -1242,7 +1335,9 @@ function SceneBridge({
               validate={validate}
               hasIssues={(issuesByComponent[component.id] ?? []).length > 0}
               explodeFactor={explodeFactor}
+              hovered={hoveredId === component.id}
               onSelect={onSelect}
+              onHoverChange={onHoverChange}
               onDragStart={onDragStart}
               pcbTexture={pcbTexture}
             />
@@ -1327,15 +1422,15 @@ function PaletteSidebar({
                     <div className="mt-3 text-sm text-slate-300">{item.summary}</div>
                     <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-slate-300">
                       <span className="rounded-full border border-white/10 bg-white/6 px-2 py-1">
-                        {formatDimension(item.dimensions)}
+                        {formatDimensionText(item.dimensions)}
                       </span>
                       <span className="rounded-full border border-white/10 bg-white/6 px-2 py-1">
-                        {formatPower(item.powerUw)}
+                        {formatPowerText(item.powerUw)}
                       </span>
                     </div>
                     {compatible && selectedComponent ? (
                       <div className="mt-3 rounded-[16px] border border-emerald-300/20 bg-emerald-400/10 p-3 text-[11px] text-emerald-100">
-                        Size Δ {((item.dimensions[0] - selectedComponent.dimensions[0]) * 10).toFixed(1)} / {((item.dimensions[1] - selectedComponent.dimensions[1]) * 10).toFixed(1)} / {((item.dimensions[2] - selectedComponent.dimensions[2]) * 10).toFixed(1)} mm
+                        Size delta {((item.dimensions[0] - selectedComponent.dimensions[0]) * 10).toFixed(1)} / {((item.dimensions[1] - selectedComponent.dimensions[1]) * 10).toFixed(1)} / {((item.dimensions[2] - selectedComponent.dimensions[2]) * 10).toFixed(1)} mm
                       </div>
                     ) : null}
                   </div>
@@ -1514,7 +1609,7 @@ function PropertiesPanel({
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <div className="rounded-[16px] border border-white/10 bg-slate-950/70 p-3">
                   <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Dimensions</div>
-                  <div className="mt-2 text-sm text-slate-100">{formatDimension(component.dimensions)}</div>
+                  <div className="mt-2 text-sm text-slate-100">{formatDimensionText(component.dimensions)}</div>
                 </div>
                 <div className="rounded-[16px] border border-white/10 bg-slate-950/70 p-3">
                   <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Weight</div>
@@ -1522,7 +1617,7 @@ function PropertiesPanel({
                 </div>
                 <div className="rounded-[16px] border border-white/10 bg-slate-950/70 p-3">
                   <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Power Draw</div>
-                  <div className="mt-2 text-sm text-slate-100">{formatPower(component.powerUw)}</div>
+                  <div className="mt-2 text-sm text-slate-100">{formatPowerText(component.powerUw)}</div>
                 </div>
                 <div className="rounded-[16px] border border-white/10 bg-slate-950/70 p-3">
                   <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Operating Temp</div>
@@ -1550,9 +1645,9 @@ function PropertiesPanel({
                       <div className="mt-2 text-lg font-semibold">{component.partNumber}</div>
                       <div className="mt-1 text-sm text-slate-300">{component.keySpec}</div>
                       <div className="mt-3 space-y-2 text-sm text-slate-200">
-                        <div>{formatDimension(component.dimensions)}</div>
+                        <div>{formatDimensionText(component.dimensions)}</div>
                         <div>{component.weightG.toFixed(1)} g</div>
-                        <div>{formatPower(component.powerUw)}</div>
+                        <div>{formatPowerText(component.powerUw)}</div>
                       </div>
                     </div>
                     <div className="space-y-3">
@@ -1569,9 +1664,9 @@ function PropertiesPanel({
                               </Badge>
                             </div>
                             <div className="mt-3 grid grid-cols-2 gap-2 text-sm text-slate-200">
-                              <div>{formatDimension(option.dimensions)}</div>
+                              <div>{formatDimensionText(option.dimensions)}</div>
                               <div>{option.weightG.toFixed(1)} g</div>
-                              <div>{formatPower(option.powerUw)}</div>
+                              <div>{formatPowerText(option.powerUw)}</div>
                               <div>{option.operatingTemp}</div>
                             </div>
                             <div className="mt-3 flex justify-end">
@@ -1668,6 +1763,7 @@ export function Pacemaker3DWorkbench() {
   const [helpOpen, setHelpOpen] = React.useState(false);
   const [alternativesOpen, setAlternativesOpen] = React.useState(false);
   const [replacementPreview, setReplacementPreview] = React.useState<ReplacementPreview | null>(null);
+  const [hoveredId, setHoveredId] = React.useState<string | null>(null);
 
   const selectedComponent =
     components.find((component) => component.id === selectedId) ?? null;
@@ -1888,7 +1984,7 @@ export function Pacemaker3DWorkbench() {
 
   return (
     <TooltipProvider delayDuration={120}>
-      <div className="-m-4 h-[calc(100svh-5.6rem)] min-h-[860px] overflow-hidden sm:-m-6">
+      <div className="h-full min-h-[860px] overflow-hidden">
         <div
           {...bindDrag()}
           onDrop={handleDrop}
@@ -1913,8 +2009,10 @@ export function Pacemaker3DWorkbench() {
               stepMode={stepMode}
               stepIndex={stepIndex}
               dragging={dragging}
+              hoveredId={hoveredId}
               issuesByComponent={issuesByComponent}
               onSelect={setSelectedId}
+              onHoverChange={setHoveredId}
               onDragStart={(componentId) => {
                 dragComponentIdRef.current = componentId;
               }}
@@ -1983,7 +2081,7 @@ export function Pacemaker3DWorkbench() {
                   {replacementPreview.componentName}: {replacementPreview.previousPart} → {replacementPreview.nextPart}
                 </div>
                 <div className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">
-                  Size Δ {replacementPreview.sizeDelta}
+                  Size delta {replacementPreview.sizeDelta}
                 </div>
               </motion.div>
             ) : null}

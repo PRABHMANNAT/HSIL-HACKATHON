@@ -8,7 +8,6 @@ import {
   Html,
   Line,
   OrbitControls,
-  RoundedBox,
   Stars,
 } from "@react-three/drei";
 import * as THREE from "three";
@@ -181,6 +180,88 @@ function BloodParticles({ currentTime }: { currentTime: number }) {
   );
 }
 
+function PacemakerTwinDevice({
+  position,
+  atrialGlow,
+  ventricularGlow,
+}: {
+  position: [number, number, number];
+  atrialGlow: number;
+  ventricularGlow: number;
+}) {
+  const shellGlow = 0.1 + Math.max(atrialGlow, ventricularGlow) * 0.16;
+
+  return (
+    <group position={position} rotation={[0.08, 0.02, -0.16]}>
+      <mesh position={[0.04, 0.06, -0.02]} scale={[0.94, 1.04, 0.32]} castShadow receiveShadow>
+        <capsuleGeometry args={[0.46, 0.8, 18, 36]} />
+        <meshStandardMaterial
+          color="#96a6b8"
+          metalness={0.86}
+          roughness={0.28}
+          envMapIntensity={1.35}
+          emissive="#dbeafe"
+          emissiveIntensity={shellGlow}
+        />
+      </mesh>
+      <mesh position={[-0.1, -0.44, 0.08]} scale={[0.78, 0.46, 0.28]} castShadow receiveShadow>
+        <capsuleGeometry args={[0.5, 0.38, 16, 28]} />
+        <meshStandardMaterial color="#6c7b8d" metalness={0.92} roughness={0.22} envMapIntensity={1.42} />
+      </mesh>
+      <mesh position={[0.02, 0.02, 0.16]} scale={[0.9, 1, 0.04]}>
+        <capsuleGeometry args={[0.44, 0.72, 16, 28]} />
+        <meshStandardMaterial color="#d9e3ec" metalness={0.94} roughness={0.16} transparent opacity={0.3} />
+      </mesh>
+      <mesh position={[0.42, 0.58, 0.08]} castShadow receiveShadow>
+        <boxGeometry args={[0.42, 0.3, 0.24]} />
+        <meshStandardMaterial
+          color="#ced9e5"
+          metalness={0.34}
+          roughness={0.12}
+          envMapIntensity={1.3}
+          transparent
+          opacity={0.72}
+        />
+      </mesh>
+      <mesh position={[0.34, 0.46, 0.08]}>
+        <boxGeometry args={[0.24, 0.06, 0.2]} />
+        <meshStandardMaterial color="#657385" metalness={0.82} roughness={0.26} />
+      </mesh>
+      <mesh position={[-0.06, -0.12, 0.14]} scale={[0.68, 0.04, 0.03]}>
+        <boxGeometry args={[1.08, 0.12, 0.12]} />
+        <meshStandardMaterial color="#d9e3ec" metalness={0.94} roughness={0.16} transparent opacity={0.26} />
+      </mesh>
+      {[
+        { x: 0.34, z: 0.16, glow: atrialGlow, tone: "#60a5fa" },
+        { x: 0.34, z: 0.01, glow: ventricularGlow, tone: "#fb923c" },
+      ].map((port) => (
+        <group key={`${port.tone}-${port.z}`} position={[port.x, 0.6, port.z]}>
+          <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
+            <cylinderGeometry args={[0.06, 0.06, 0.22, 24]} />
+            <meshStandardMaterial
+              color="#edf2f7"
+              metalness={0.94}
+              roughness={0.14}
+              emissive={port.tone}
+              emissiveIntensity={0.12 + port.glow * 0.85}
+            />
+          </mesh>
+          <mesh position={[0, 0, 0.08]} rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[0.078, 0.016, 12, 36]} />
+            <meshStandardMaterial
+              color="#94a3b8"
+              metalness={0.88}
+              roughness={0.2}
+              emissive={port.tone}
+              emissiveIntensity={0.1 + port.glow * 0.75}
+            />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  );
+}
+
 function HeartSceneContents({
   snapshot,
   exploded,
@@ -203,6 +284,8 @@ function HeartSceneContents({
   const rvAnchor: [number, number, number] = [0.82 + heartOffset, -0.75, 0.45];
   const leadGlowA = 0.12 + atrialPulse * 1.2;
   const leadGlowV = 0.12 + ventricularPulse * 1.2;
+  const deviceLeadA: [number, number, number] = [devicePosition[0] + 0.42, devicePosition[1] + 0.54, 0.18];
+  const deviceLeadV: [number, number, number] = [devicePosition[0] + 0.43, devicePosition[1] + 0.46, 0.02];
 
   return (
     <>
@@ -264,27 +347,12 @@ function HeartSceneContents({
         <BloodParticles currentTime={snapshot.currentTime} />
       </group>
 
-      <group position={devicePosition}>
-        <RoundedBox args={[1.1, 0.7, 0.3]} radius={0.08} smoothness={6} castShadow receiveShadow>
-          <meshStandardMaterial color="#a8b2c3" metalness={0.86} roughness={0.28} />
-        </RoundedBox>
-        <RoundedBox position={[0.62, 0.14, 0.02]} args={[0.34, 0.22, 0.28]} radius={0.05} smoothness={6}>
-          <meshStandardMaterial color="#6b7280" metalness={0.7} roughness={0.36} />
-        </RoundedBox>
-        <mesh position={[0.76, 0.14, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.04, 0.04, 0.14, 18]} />
-          <meshStandardMaterial color="#e2e8f0" metalness={0.95} roughness={0.18} />
-        </mesh>
-        <mesh position={[0.76, 0.14, -0.06]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.04, 0.04, 0.14, 18]} />
-          <meshStandardMaterial color="#e2e8f0" metalness={0.95} roughness={0.18} />
-        </mesh>
-      </group>
+      <PacemakerTwinDevice position={devicePosition} atrialGlow={leadGlowA} ventricularGlow={leadGlowV} />
 
       <LeadTube
         points={[
-          [devicePosition[0] + 0.75, devicePosition[1] + 0.16, 0.11],
-          [devicePosition[0] + 1.45, 1.65, 0.35],
+          deviceLeadA,
+          [devicePosition[0] + 1.05, 1.88, 0.38],
           [0.55 + heartOffset, 1.45, 0.55],
           raAnchor,
         ]}
@@ -293,8 +361,8 @@ function HeartSceneContents({
       />
       <LeadTube
         points={[
-          [devicePosition[0] + 0.75, devicePosition[1] + 0.16, -0.06],
-          [devicePosition[0] + 1.5, 1.25, 0.1],
+          deviceLeadV,
+          [devicePosition[0] + 1.08, 1.46, 0.12],
           [0.42 + heartOffset, 0.1, 0.32],
           rvAnchor,
         ]}
